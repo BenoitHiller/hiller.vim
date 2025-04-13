@@ -69,7 +69,9 @@ call extend(v:colornames, s:custom_colors, 'keep')
 
 " A helper function to set a highlight line given that both the gui and cterm
 " colors are pulling from the same palette.
-fun! s:HillerHighlight(name, fg, bg, attrs)
+fun! s:HillerHighlight(name, fg, bg, attrs, ...)
+  let l:extra = join(a:000, ' ')
+
   if a:fg == 'NONE'
     let l:fg = ' guifg=NONE ctermfg=NONE'
   else
@@ -84,7 +86,11 @@ fun! s:HillerHighlight(name, fg, bg, attrs)
 
   let l:attrs = ' gui=' . a:attrs . ' cterm=' . a:attrs
 
-  exec 'hi ' . a:name . l:fg . l:bg . l:attrs
+  if empty(l:extra)
+    exec 'hi ' . a:name . l:fg . l:bg . l:attrs
+  else
+    exec 'hi ' . a:name . l:fg . l:bg . l:attrs . ' ' . l:extra
+  endif
 endfun
 
 " define a buffer local command to make writing out the lines a bit less
@@ -186,10 +192,10 @@ HHi WarningMsg White Red NONE
 " Spelling "
 """"""""""""
 
-HHi SpellBad Red NONE underline
-HHi SpellCap Blue NONE underline
-HHi SpellLocal Cyan NONE underline
-HHi SpellRare Magenta NONE underline
+HHi SpellBad NONE NONE undercurl term=NONE ctermul=Red guisp=hiller_red
+HHi SpellCap NONE NONE undercurl term=NONE ctermul=Blue guisp=hiller_blue
+HHi SpellLocal NONE NONE undercurl term=NONE ctermul=Cyan guisp=hiller_cyan
+HHi SpellRare NONE NONE undercurl term=NONE ctermul=Magenta guisp=hiller_magenta
 
 """"""""
 " Diff "
