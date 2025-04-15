@@ -333,6 +333,16 @@ hi link htmlEndTag Identifier
 
 hi link javaScriptNumber Number
 
+""""""""""""""
+" TypeScript "
+""""""""""""""
+
+hi link typescriptImport Statement
+hi link typescriptExport Statement
+hi link typescriptKeywordOp Keyword
+" this is the type keyword so this matches how const and var get highlighted
+hi link typescriptOperator Keyword
+
 """""""""""
 " Cleanup "
 """""""""""
