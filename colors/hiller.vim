@@ -57,31 +57,34 @@ augroup HillerColorScheme
   au ColorSchemePre * au! HillerColorScheme
 augroup END
 
-let s:custom_colors = {}
 let g:terminal_ansi_colors = []
 for color in s:color_order
-  let key = 'hiller_' . tolower(color)
-  let g:terminal_ansi_colors += [key]
-  let s:custom_colors[key] = s:palette[color]
+  let g:terminal_ansi_colors += [s:palette[color]]
 endfor
-
-call extend(v:colornames, s:custom_colors, 'keep')
 
 " A helper function to set a highlight line given that both the gui and cterm
 " colors are pulling from the same palette.
 fun! s:HillerHighlight(name, fg, bg, attrs, ...)
-  let l:extra = join(a:000, ' ')
+  let l:extras = []
+
+  if !empty(a:000)
+    for value in a:000
+      let l:extras += [substitute(value, 'gui_\(\w\+\)', '\=s:palette[submatch(1)]', 'g')]
+    endfor
+  endif
+
+  let l:extra = join(l:extras, ' ')
 
   if a:fg == 'NONE'
     let l:fg = ' guifg=NONE ctermfg=NONE'
   else
-    let l:fg = ' guifg=hiller_' . tolower(a:fg) . ' ctermfg=' . a:fg
+    let l:fg = ' guifg=' . s:palette[a:fg] . ' ctermfg=' . a:fg
   endif
 
   if a:bg == 'NONE'
     let l:bg = ' guibg=NONE ctermbg=NONE'
   else
-    let l:bg = ' guibg=hiller_' . tolower(a:bg) . ' ctermbg=' . a:bg
+    let l:bg = ' guibg=' . s:palette[a:bg] . ' ctermbg=' . a:bg
   endif
 
   let l:attrs = ' gui=' . a:attrs . ' cterm=' . a:attrs
@@ -130,8 +133,6 @@ HHi Pmenu White DarkGray NONE
 HHi PmenuSel Black Gray NONE
 HHi PmenuSbar Black Black NONE
 HHi PmenuThumb NONE White NONE
-hi PmenuMatch "default
-hi PmenuMatchSel "default
 
 """"""""""""""""""""""""""
 " Window Border Elements "
@@ -149,9 +150,6 @@ HHi TabLine White DarkGray NONE
 HHi TabLineFill NONE DarkGray NONE
 HHi TabLineSel White NONE NONE
 
-hi ToolbarLine "default
-hi ToolbarButton "default
-
 HHi WildMenu White NONE NONE
 
 HHi ModeMsg Black Cyan NONE
@@ -165,7 +163,7 @@ hi VisualNOS "default
 
 HHi Cursor Black White reverse
 hi lCursor "default
-HHi CursorLine NONE NONE NONE
+HHi CursorLine NONE NONE NONE term=NONE
 HHi CursorColumn NONE NONE NONE
 
 """"""""""
@@ -192,10 +190,19 @@ HHi WarningMsg White Red NONE
 " Spelling "
 """"""""""""
 
-HHi SpellBad NONE NONE undercurl term=NONE ctermul=Red guisp=hiller_red
-HHi SpellCap NONE NONE undercurl term=NONE ctermul=Blue guisp=hiller_blue
-HHi SpellLocal NONE NONE undercurl term=NONE ctermul=Cyan guisp=hiller_cyan
-HHi SpellRare NONE NONE undercurl term=NONE ctermul=Magenta guisp=hiller_magenta
+if has('nvim')
+  " I guess neovim doesn't have a way of setting a separate terminal underline
+  " color.
+  HHi SpellBad NONE NONE undercurl term=NONE guisp=gui_Red
+  HHi SpellCap NONE NONE undercurl term=NONE guisp=gui_Blue
+  HHi SpellLocal NONE NONE undercurl term=NONE guisp=gui_Cyan
+  HHi SpellRare NONE NONE undercurl term=NONE guisp=gui_Magenta
+else
+  HHi SpellBad NONE NONE undercurl term=NONE ctermul=Red guisp=gui_Red
+  HHi SpellCap NONE NONE undercurl term=NONE ctermul=Blue guisp=gui_Blue
+  HHi SpellLocal NONE NONE undercurl term=NONE ctermul=Cyan guisp=gui_Cyan
+  HHi SpellRare NONE NONE undercurl term=NONE ctermul=Magenta guisp=gui_Magenta
+endif
 
 """"""""
 " Diff "
