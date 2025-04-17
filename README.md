@@ -2,6 +2,8 @@ My personal vim colorscheme. This is heavily based off of [twerth/ir_black](http
 
 Named after my last name because naming is hard.
 
+![Screen Shot 2025-04-17 at 10 09 22](https://github.com/user-attachments/assets/f8ef9cfe-b1df-412a-adb8-d34b8a2bd124)
+
 ## Usage
 
 You can install the colorscheme with any vim package manager by pointing it at this repo. So for vim-plug you would put the following in your `.vimrc`:
